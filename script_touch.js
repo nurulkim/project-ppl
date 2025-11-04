@@ -154,59 +154,36 @@ function redrawAll() {
 }
 
 // ====================================================
-// DRAG & DROP ELEMEN (TOUCH FIX)
+// DRAG & DROP ELEMEN (TOUCH)
 // ====================================================
 document.querySelectorAll(".elemen").forEach((el) => {
   el.addEventListener("touchstart", (e) => {
-    e.preventDefault(); // penting agar tidak muncul menu download
-    e.currentTarget.dataset.touchId = e.currentTarget.id;
-
-    // simpan posisi awal sentuhan
+    e.preventDefault();
     const touch = e.touches[0];
-    el.dataset.startX = touch.clientX - el.offsetLeft;
-    el.dataset.startY = touch.clientY - el.offsetTop;
+    const clone = document.createElement("div");
+    clone.classList.add("resizable");
+    clone.style.position = "absolute";
+    clone.style.width = "100px";
+    clone.style.height = "100px";
+    clone.style.left = (touch.clientX - elementsLayer.getBoundingClientRect().left - 50) + "px";
+    clone.style.top = (touch.clientY - elementsLayer.getBoundingClientRect().top - 50) + "px";
+
+    const img = document.createElement("img");
+    img.src = el.querySelector("img").src;
+    img.alt = "elemen";
+    clone.appendChild(img);
+
+    const handle = document.createElement("div");
+    handle.classList.add("resize-handle");
+    clone.appendChild(handle);
+
+    elementsLayer.appendChild(clone);
+
+    makeDraggable(clone);
+    makeResizable(clone, handle);
+
+    if (petunjuk) petunjuk.style.display = "none";
   });
-});
-
-elementsLayer.addEventListener("touchmove", (e) => {
-  e.preventDefault();
-});
-
-elementsLayer.addEventListener("touchend", (e) => {
-  e.preventDefault();
-  const touch = e.changedTouches[0];
-  const targetId = touch.target.dataset.touchId;
-  if (!targetId) return;
-
-  const draggedEl = document.getElementById(targetId);
-  if (!draggedEl) return;
-
-  if (petunjuk) petunjuk.style.display = "none";
-
-  const rect = elementsLayer.getBoundingClientRect();
-  const x = touch.clientX - rect.left - 50;
-  const y = touch.clientY - rect.top - 50;
-
-  const clone = document.createElement("div");
-  clone.classList.add("resizable");
-  clone.style.left = `${x}px`;
-  clone.style.top = `${y}px`;
-  clone.style.width = "100px";
-  clone.style.height = "100px";
-
-  const img = document.createElement("img");
-  img.src = draggedEl.querySelector("img").src;
-  img.alt = "elemen";
-  clone.appendChild(img);
-
-  const handle = document.createElement("div");
-  handle.classList.add("resize-handle");
-  clone.appendChild(handle);
-
-  elementsLayer.appendChild(clone);
-
-  makeDraggable(clone);
-  makeResizable(clone, handle);
 });
 
 // ====================================================
@@ -233,8 +210,8 @@ function makeDraggable(el) {
     let newY = touch.clientY - elementsLayer.getBoundingClientRect().top - offsetY;
     newX = Math.max(0, Math.min(newX, elementsLayer.offsetWidth - el.offsetWidth));
     newY = Math.max(0, Math.min(newY, elementsLayer.offsetHeight - el.offsetHeight));
-    el.style.left = `${newX}px`;
-    el.style.top = `${newY}px`;
+    el.style.left = newX + "px";
+    el.style.top = newY + "px";
   });
 
   el.addEventListener("touchend", () => {

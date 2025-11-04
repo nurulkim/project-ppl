@@ -4,76 +4,115 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Media Interaktif - Perbaikan Setrika</title>
+<link rel="stylesheet" href="style.css" />
 <style>
-  body {
-    font-family: "Poppins", sans-serif;
-    background: linear-gradient(135deg, #e3f2fd, #f3f5f7);
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+/* Tombol kembali */
+#btnBack {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+  z-index: 999;
+  transition: 0.3s;
+}
+#btnBack:hover { background: #3578d3; transform: scale(1.05); }
 
-  #btnBack {
-    position: absolute;
-    top: 15px; left: 15px;
-    background: #4a90e2; color: white;
-    border: none; border-radius: 50%;
-    width: 48px; height: 48px;
-    font-size: 22px; display: flex; align-items: center; justify-content: center;
-    cursor: pointer; box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-    z-index: 999; transition: 0.3s;
-  }
-  #btnBack:hover { background: #3578d3; transform: scale(1.05); }
+body {
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg,#e3f2fd,#f3f5f7);
+  margin: 0;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-  h2 { text-align: center; margin-top: 70px; color: #2a4d8f; }
+h2 { text-align: center; margin-bottom: 10px; }
 
-  #controls { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin: 10px 0; }
-  #controls button {
-    padding: 8px 14px; border: none; border-radius: 6px;
-    background: #e0e0e0; cursor: pointer; font-size: 15px; transition: 0.2s;
-  }
-  #controls button.active { background: #4a90e2; color: white; }
+#controls {
+  display: flex; justify-content: center; gap: 10px; margin-bottom: 15px;
+}
+#controls button {
+  padding: 8px 14px;
+  border: none; border-radius: 6px;
+  background: #e0e0e0;
+  cursor: pointer; font-size: 15px;
+  transition: 0.2s;
+}
+#controls button.active { background: #4a90e2; color: white; }
 
-  #canvasWrapper { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 1200px; }
-  #canvas {
-    position: relative; width: 65%; height: 500px;
-    border: 2px solid #ccc; border-radius: 12px; background: white; overflow: hidden;
-  }
-  #drawCanvas { position: absolute; top:0; left:0; width:100%; height:100%; z-index:4; background:transparent; }
-  #elements-layer { position:absolute; top:0; left:0; width:100%; height:100%; z-index:5; }
-  #petunjuk { position:absolute; top:45%; left:50%; transform:translate(-50%, -50%); color:#777; font-size:16px; text-align:center; }
+#canvasWrapper {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 20px; flex-wrap: wrap; width: 100%; max-width: 1200px;
+}
 
-  #canvasKunci {
-    width: 30%; border: 2px dashed #aaa; border-radius: 12px; padding: 10px;
-    background: #fafafa; text-align: center; display: none;
-  }
-  #canvasKunci img { width: 100%; max-height: 480px; object-fit: contain; border-radius: 8px; }
+#canvas {
+  position: relative; width: 65%; height: 500px;
+  border: 2px solid #ccc; border-radius: 12px; background: white;
+  overflow: hidden;
+}
 
-  #elemenContainer { margin-top: 20px; width: 100%; max-width: 1200px; }
-  #elemenList { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
-  .elemen {
-    width: 100px; height: 100px; border: 2px solid #ccc; border-radius: 8px;
-    background:white; display:flex; align-items:center; justify-content:center; cursor: grab;
-  }
-  .elemen img { width: 80%; height: 80%; object-fit: contain; }
+#drawCanvas {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: transparent; z-index: 4; touch-action: none;
+}
 
-  .resizable {
-    position: absolute; border: 1px dashed #aaa; border-radius: 6px;
-    background: transparent; cursor: move;
-  }
-  .resizable img { width:100%; height:100%; object-fit:contain; pointer-events:none; }
-  .resize-handle {
-    position:absolute; bottom:0; right:0; width:14px; height:14px;
-    background:#4a90e2; border-radius:50%; cursor: se-resize;
-  }
+#elements-layer {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5;
+}
+
+#petunjuk {
+  position: absolute; top: 45%; left: 50%; transform: translate(-50%,-50%);
+  color: #777; font-size: 16px; text-align: center;
+}
+
+#canvasKunci {
+  width: 30%; border: 2px dashed #aaa; border-radius: 12px;
+  padding: 10px; background: #fafafa; text-align: center; display: none;
+}
+#canvasKunci img { width: 100%; max-height: 480px; object-fit: contain; border-radius: 8px; }
+
+#elemenContainer { margin-top: 20px; }
+#elemenList {
+  display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;
+}
+.elemen {
+  width: 100px; height: 100px;
+  border: 2px solid #ccc; border-radius: 8px;
+  background: white; display: flex; align-items: center; justify-content: center;
+  cursor: grab;
+}
+.elemen img { width: 80%; height: 80%; object-fit: contain; }
+
+.resizable {
+  position: absolute; border: 1px dashed #aaa; border-radius: 6px;
+  background: transparent; cursor: move;
+}
+.resizable img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+.resize-handle {
+  position: absolute; bottom: 0; right: 0;
+  width: 14px; height: 14px;
+  background: #4a90e2; border-radius: 50%; cursor: se-resize;
+}
 </style>
 </head>
 <body>
-<button id="btnBack" title="Kembali ke Menu Utama" onclick="window.location.href='index.html'">⬅️</button>
+
+<!-- Tombol kembali -->
+<button id="btnBack" title="Kembali ke Menu Utama" onclick="window.location.href='index.html'">
+  ⬅️
+</button>
 
 <h2>🧰 Media Pembelajaran: Merangkai Elemen Setrika Listrik</h2>
 
@@ -108,18 +147,16 @@
 </div>
 
 <script>
+// ================= DRAW CANVAS =================
 const canvasArea = document.getElementById("canvas");
 const drawCanvas = document.getElementById("drawCanvas");
 const ctx = drawCanvas.getContext("2d");
-const elementsLayer = document.getElementById("elements-layer");
-const petunjuk = document.getElementById("petunjuk");
-const divKunci = document.getElementById("canvasKunci");
 
 drawCanvas.width = canvasArea.offsetWidth;
 drawCanvas.height = canvasArea.offsetHeight;
 
 let mode = "elemen";
-let drawing = false, startX, startY;
+let isPainting = false, startX, startY;
 let currentColor = "#2a4d8f", currentSize = 2;
 let lines = [];
 
@@ -127,20 +164,21 @@ const btnDraw = document.getElementById("modeDraw");
 const btnElemen = document.getElementById("modeClick");
 const btnUndo = document.getElementById("undo");
 const btnKunci = document.getElementById("toggleKunci");
+const divKunci = document.getElementById("canvasKunci");
 
 btnDraw.onclick = () => setMode("draw");
 btnElemen.onclick = () => setMode("elemen");
 btnUndo.onclick = () => { lines.pop(); redrawAll(); };
 btnKunci.onclick = () => {
-  divKunci.style.display = divKunci.style.display === "none" || divKunci.style.display === "" ? "block" : "none";
+  divKunci.style.display = divKunci.style.display === "block" ? "none" : "block";
   btnKunci.textContent = divKunci.style.display === "block" ? "🙈 Sembunyikan Kunci Jawaban" : "👁️ Tampilkan Kunci Jawaban";
 };
 
 function setMode(m) {
   mode = m;
-  btnDraw.classList.toggle("active", m === "draw");
-  btnElemen.classList.toggle("active", m === "elemen");
-  drawCanvas.style.pointerEvents = (m === "draw") ? "auto" : "none";
+  btnDraw.classList.toggle("active", m==="draw");
+  btnElemen.classList.toggle("active", m==="elemen");
+  drawCanvas.style.pointerEvents = (m==="draw") ? "auto" : "none";
 }
 
 function getTouchPos(e) {
@@ -150,14 +188,15 @@ function getTouchPos(e) {
 }
 
 drawCanvas.addEventListener("touchstart", e => {
-  if (mode !== "draw" || e.touches.length > 1) return;
+  if(mode!=="draw") return;
   e.preventDefault();
   const pos = getTouchPos(e);
-  drawing = true;
+  isPainting = true;
   startX = pos.x; startY = pos.y;
 });
+
 drawCanvas.addEventListener("touchmove", e => {
-  if (!drawing || mode !== "draw" || e.touches.length > 1) return;
+  if(!isPainting || mode!=="draw") return;
   e.preventDefault();
   const pos = getTouchPos(e);
   ctx.beginPath();
@@ -169,26 +208,29 @@ drawCanvas.addEventListener("touchmove", e => {
   ctx.stroke();
   startX = pos.x; startY = pos.y;
 });
+
 drawCanvas.addEventListener("touchend", e => {
-  if (mode === "draw") {
-    drawing = false;
-    lines.push(ctx.getImageData(0, 0, drawCanvas.width, drawCanvas.height));
+  if(mode==="draw") {
+    isPainting = false;
+    lines.push(ctx.getImageData(0,0,drawCanvas.width,drawCanvas.height));
   }
 });
 
 function redrawAll() {
-  ctx.clearRect(0,0,drawCanvas.width, drawCanvas.height);
-  for (let snap of lines) ctx.putImageData(snap,0,0);
+  ctx.clearRect(0,0,drawCanvas.width,drawCanvas.height);
+  for(let snap of lines) ctx.putImageData(snap,0,0);
 }
 
-document.querySelectorAll(".elemen").forEach(el => {
-  el.addEventListener("touchstart", e => { if(e.touches.length>1) return; e.preventDefault(); });
-  el.addEventListener("touchend", e => {
-    if(e.changedTouches.length>1) return;
+// ================= DRAG & DROP ELEMENTS =================
+const elementsLayer = document.getElementById("elements-layer");
+const petunjuk = document.getElementById("petunjuk");
+
+document.querySelectorAll(".elemen").forEach(el=>{
+  el.addEventListener("touchend", e=>{
     e.preventDefault();
     const rect = elementsLayer.getBoundingClientRect();
-    const x = e.changedTouches[0].clientX - rect.left - el.offsetWidth/2;
-    const y = e.changedTouches[0].clientY - rect.top - el.offsetHeight/2;
+    const x = e.changedTouches[0].clientX - rect.left - 50;
+    const y = e.changedTouches[0].clientY - rect.top - 50;
     petunjuk.style.display = "none";
     createDrop(el,x,y);
   });
@@ -201,58 +243,50 @@ function createDrop(el,x,y){
   clone.style.top=y+"px";
   clone.style.width="100px";
   clone.style.height="100px";
-  const img=document.createElement("img");
-  img.src=el.querySelector("img").src;
+  const img = document.createElement("img");
+  img.src = el.querySelector("img").src;
   clone.appendChild(img);
-  const handle=document.createElement("div");
+  const handle = document.createElement("div");
   handle.className="resize-handle";
   clone.appendChild(handle);
   elementsLayer.appendChild(clone);
   makeDraggable(clone);
-  makeResizable(clone,handle);
+  makeResizable(clone, handle);
 }
 
 function makeDraggable(el){
-  let dragging=false, ox, oy;
-  el.addEventListener("touchstart", e => {
-    if(e.touches.length>1) return;
+  let dragging=false, ox,oy;
+  el.addEventListener("touchstart", e=>{
     if(e.target.classList.contains("resize-handle")) return;
-    e.preventDefault();
-    const t=e.touches[0];
-    dragging=true;
-    ox=t.clientX-el.offsetLeft;
-    oy=t.clientY-el.offsetTop;
+    const t = e.touches[0];
+    dragging=true; ox=t.clientX - el.offsetLeft; oy=t.clientY - el.offsetTop;
   });
-  document.addEventListener("touchmove", e => {
+  document.addEventListener("touchmove", e=>{
     if(!dragging) return;
-    e.preventDefault();
-    const t=e.touches[0];
-    el.style.left=t.clientX-ox+"px";
-    el.style.top=t.clientY-oy+"px";
+    const t = e.touches[0];
+    el.style.left = t.clientX - ox + "px";
+    el.style.top = t.clientY - oy + "px";
   });
   document.addEventListener("touchend", ()=>dragging=false);
 }
 
 function makeResizable(el, handle){
-  let resizing=false, sx, sy, sw, sh;
+  let resizing=false, sx,sy,sw,sh;
   handle.addEventListener("touchstart", e=>{
-    if(e.touches.length>1) return;
     e.preventDefault();
-    const t=e.touches[0];
-    resizing=true;
-    sx=t.clientX; sy=t.clientY;
+    const t=e.touches[0]; resizing=true; sx=t.clientX; sy=t.clientY;
     sw=el.offsetWidth; sh=el.offsetHeight;
   });
   document.addEventListener("touchmove", e=>{
     if(!resizing) return;
-    e.preventDefault();
-    const t=e.touches[0];
-    el.style.width=Math.max(60, sw+t.clientX-sx)+"px";
-    el.style.height=Math.max(60, sh+t.clientY-sy)+"px";
+    const t = e.touches[0];
+    el.style.width = Math.max(60, sw + t.clientX - sx) + "px";
+    el.style.height = Math.max(60, sh + t.clientY - sy) + "px";
   });
   document.addEventListener("touchend", ()=>resizing=false);
 }
 
+// initialize
 setMode("elemen");
 </script>
 </body>

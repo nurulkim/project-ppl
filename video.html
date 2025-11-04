@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Video Pembelajaran</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #e3f2fd, #f3f5f7);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+    }
+
+    /* Tombol kembali */
+    #btnBack {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      background: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+      z-index: 999;
+      transition: 0.3s;
+    }
+
+    #btnBack:hover {
+      background: #3578d3;
+      transform: scale(1.05);
+    }
+
+    h1 {
+      margin-top: 80px;
+      color: #2a4d8f;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .video-container {
+      width: 90%;
+      max-width: 900px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+      margin: 30px 0;
+    }
+
+    .video-box {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      background: #000;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    p {
+      text-align: center;
+      font-size: 16px;
+      color: #333;
+      margin-top: -10px;
+      padding: 0 10px;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 20px;
+      }
+      p {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Tombol kembali ke dashboard -->
+  <button id="btnBack" title="Kembali ke Menu Utama" onclick="window.location.href='index.html'">
+    ⬅️
+  </button>
+
+  <h1>🎥 Video Pembelajaran</h1>
+
+  <div class="video-container">
+    <!-- Video 1 -->
+    <div class="video-box">
+      <iframe src="https://www.youtube.com/embed/ASBNa7b-7MQ"
+              title="Prinsip Kerja Alat Elektronik: Setrika Listrik"
+              allowfullscreen>
+      </iframe>
+    </div>
+    <p><strong>Video 1:</strong> Prinsip Kerja Alat Elektronik: Setrika Listrik</p>
+
+    <!-- Video 2 -->
+    <div class="video-box">
+      <iframe src="https://www.youtube.com/embed/aON_if40J_8"
+              title="Cara Kerja Setrika - Langsung Bisa Memperbaiki Sendiri"
+              allowfullscreen>
+      </iframe>
+    </div>
+    <p><strong>Video 2:</strong> Cara Kerja Setrika - Langsung Bisa Memperbaiki Sendiri</p>
+
+    <!-- Video 3 -->
+    <div class="video-box">
+      <iframe src="https://www.youtube.com/embed/SJ739--Vc3A"
+              title="60 Detik Pesona Ilmu - Mengapa setrika otomatis bisa mempertahankan suhu yang diinginkan?"
+              allowfullscreen>
+      </iframe>
+    </div>
+    <p><strong>Video 3:</strong> 60 Detik Pesona Ilmu - Mengapa setrika otomatis bisa mempertahankan suhu yang diinginkan?</p>
+  </div>
+</body>
+</html>

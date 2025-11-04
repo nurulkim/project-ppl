@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pilih Mode Interaktif</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #e3f2fd, #f3f5f7);
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    h1 {
+      color: #2a4d8f;
+      text-align: center;
+      margin-bottom: 40px;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .mode-container {
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .mode {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      width: 200px;
+      height: 200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      color: #2a4d8f;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+
+    .mode:hover {
+      background: #4a90e2;
+      color: white;
+      transform: scale(1.05);
+    }
+
+    .mode img {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 15px;
+    }
+
+    @media (max-width: 600px) {
+      .mode {
+        width: 160px;
+        height: 160px;
+      }
+      .mode img {
+        width: 64px;
+        height: 64px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Pilih Mode Media Interaktif</h1>
+
+  <div class="mode-container">
+    <a href="interaktif_mouse.html" class="mode">
+      <img src="assets/icon-mouse.png" alt="Mouse" />
+      Gunakan Mouse
+    </a>
+
+    <a href="interaktif_touch.html" class="mode">
+      <img src="assets/icon-touch.png" alt="Touchscreen" />
+      Gunakan Touchscreen
+    </a>
+  </div>
+</body>
+</html>

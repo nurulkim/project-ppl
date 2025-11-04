@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Media Interaktif - Perbaikan Setrika</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Tombol kembali ke menu utama */
+    #btnBack {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+      z-index: 999;
+      transition: 0.3s;
+    }
+
+    #btnBack:hover {
+      background: #3578d3;
+      transform: scale(1.05);
+    }
+
+    #btnBack i {
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Tombol kembali -->
+  <button id="btnBack" title="Kembali ke Menu Utama" onclick="window.location.href='index.html'">
+    ⬅️
+  </button>
+
+  <h2>🧰 Media Pembelajaran: Merangkai Elemen Setrika Listrik</h2>
+
+  <div id="controls">
+    <button id="modeDraw">✏️ Mode Gambar</button>
+    <button id="modeClick">🖱️ Drag & Drop</button>
+    <button id="undo">↩️ Undo</button>
+    <button id="toggleKunci">👁️ Tampilkan Kunci Jawaban</button>
+  </div>
+
+  <div id="canvasWrapper">
+    <div id="canvas">
+      <canvas id="drawCanvas"></canvas>
+      <div id="elements-layer"></div>
+      <div id="petunjuk">🧩 Silakan seret elemen ke area ini</div>
+    </div>
+
+    <div id="canvasKunci">
+      <h3>🔍 Susunan Benar</h3>
+      <img src="assets/kunciJawaban.png" alt="Kunci Jawaban" id="imgKunci" />
+    </div>
+  </div>
+
+  <div id="elemenContainer">
+    <h4>🎨 Elemen Setrika</h4>
+    <div id="elemenList">
+      <div class="elemen" id="elemenA" draggable="true"><img src="assets/titikA.png" alt="A" /></div>
+      <div class="elemen" id="elemenB" draggable="true"><img src="assets/titikB.png" alt="B" /></div>
+      <div class="elemen" id="elemenC" draggable="true"><img src="assets/titikC.png" alt="C" /></div>
+      <div class="elemen" id="elemenD" draggable="true"><img src="assets/titikD.png" alt="D" /></div>
+      <div class="elemen" id="elemenE" draggable="true"><img src="assets/titikE.png" alt="E" /></div>
+    </div>
+  </div>
+
+  <script src="script_mouse.js"></script>
+</body>
+</html>

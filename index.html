@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Pembelajaran</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center; /* Vertikal tengah */
+      justify-content: center; /* Horizontal tengah */
+      background: linear-gradient(135deg, #e3f2fd, #f3f5f7);
+    }
+
+    .dashboard {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      width: 100%;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2a4d8f;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .menu {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 10px;
+    }
+
+    .menu-item {
+      width: 140px;
+      height: 140px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      text-decoration: none;
+      color: #2a4d8f;
+      font-weight: 600;
+      transition: 0.3s ease;
+    }
+
+    .menu-item:hover {
+      transform: scale(1.08);
+      background: #4a90e2;
+      color: white;
+    }
+
+    .menu-item img {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .menu-item {
+        width: 110px;
+        height: 110px;
+        font-size: 13px;
+      }
+
+      .menu-item img {
+        width: 48px;
+        height: 48px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <h1>🎓 Dashboard Pembelajaran Perbaikan Peralatan Listrik</h1>
+
+    <div class="menu">
+      <a href="materi.html" class="menu-item">
+        <img src="assets/icon-materi.png" alt="Materi" />
+        Materi
+      </a>
+
+      <a href="modul.html" class="menu-item">
+        <img src="assets/icon-modul.png" alt="Modul" />
+        Modul
+      </a>
+
+      <a href="video.html" class="menu-item">
+        <img src="assets/icon-video.png" alt="Video" />
+        Video
+      </a>
+
+      <a href="interaktif_mode.html" class="menu-item">
+        <img src="assets/icon-interaktif.png" alt="Media Interaktif" />
+        Media Interaktif
+      </a>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Media Interaktif - Setrika</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h2>🧰 Media Pembelajaran: Merangkai Elemen Setrika</h2>
+
+<div id="controls">
+  <button id="modeElemen" class="active">🖐️ Drag & Drop</button>
+  <button id="modeDraw">✏️ Pulpen</button>
+  <select id="colorPicker">
+    <option value="#2a4d8f" selected>Biru</option>
+    <option value="#ff0000">Merah</option>
+    <option value="#000000">Hitam</option>
+  </select>
+  <select id="sizePicker">
+    <option value="2" selected>Tipis</option>
+    <option value="4">Sedang</option>
+    <option value="6">Tebal</option>
+  </select>
+  <button id="undo">↩️ Undo</button>
+  <button id="toggleKunci">👁️ Tampilkan Kunci Jawaban</button>
+</div>
+
+<div id="canvasWrapper">
+  <div id="canvas">
+    <canvas id="drawCanvas"></canvas>
+    <div id="elements-layer"></div>
+    <div id="petunjuk">🧩 Seret elemen ke area ini</div>
+  </div>
+  <div id="canvasKunci">
+    <h3>🔍 Susunan Benar</h3>
+    <img src="assets/kunciJawaban.png" alt="Kunci Jawaban">
+  </div>
+</div>
+
+<div id="elemenContainer">
+  <h4>🎨 Elemen Setrika</h4>
+  <div id="elemenList">
+    <div class="elemen" id="elemenA"><img src="assets/titikA.png" alt="A"></div>
+    <div class="elemen" id="elemenB"><img src="assets/titikB.png" alt="B"></div>
+    <div class="elemen" id="elemenC"><img src="assets/titikC.png" alt="C"></div>
+    <div class="elemen" id="elemenD"><img src="assets/titikD.png" alt="D"></div>
+    <div class="elemen" id="elemenE"><img src="assets/titikE.png" alt="E"></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

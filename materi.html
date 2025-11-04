@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Materi Pembelajaran</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #e3f2fd, #f3f5f7);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+    }
+
+    /* Tombol kembali */
+    #btnBack {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      background: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+      z-index: 999;
+      transition: 0.3s;
+    }
+
+    #btnBack:hover {
+      background: #3578d3;
+      transform: scale(1.05);
+    }
+
+    h1 {
+      margin-top: 80px;
+      color: #2a4d8f;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .slide-container {
+      width: 90%;
+      max-width: 900px;
+      margin: 30px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
+    }
+
+    .slide-box {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      background: #000;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    p {
+      text-align: center;
+      font-size: 16px;
+      color: #333;
+      margin-top: -10px;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Tombol kembali ke dashboard -->
+  <button id="btnBack" title="Kembali ke Menu Utama" onclick="window.location.href='index.html'">
+    ⬅️
+  </button>
+
+  <h1>📖 Materi Pembelajaran</h1>
+
+  <div class="slide-container">
+    <!-- Contoh slide Google -->
+    <div class="slide-box">
+      <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vRxIDKpDMOaBpXxJd0hWGGtBf8VjQSuI_k4EXAMPLE/embed?start=false&loop=false&delayms=3000"
+              allowfullscreen
+              title="Slide Materi 1">
+      </iframe>
+    </div>
+    <p>Materi 1: Pengantar dan Komponen Setrika</p>
+
+    <!-- Contoh slide tambahan -->
+    <!--
+    <div class="slide-box">
+      <iframe src="https://docs.google.com/presentation/d/e/2PACX-EXAMPLE2/embed?start=false&loop=false&delayms=3000"
+              allowfullscreen
+              title="Slide Materi 2">
+      </iframe>
+    </div>
+    <p>Materi 2: Prinsip Kerja dan Cara Perawatan</p>
+    -->
+  </div>
+</body>
+</html>

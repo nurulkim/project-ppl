@@ -13,7 +13,6 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
       min-height: 100vh;
     }
 
@@ -59,12 +58,15 @@
       overflow: hidden;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       background: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    iframe {
+    .pdf-container object,
+    .pdf-container iframe {
       width: 100%;
       height: 100%;
-      border: none;
     }
 
     .btn-download {
@@ -104,15 +106,15 @@
   <h1>📘 Modul Pembelajaran</h1>
 
   <div class="pdf-container">
-    <!-- Menampilkan PDF -->
-    <iframe src="assets/RPP_SetriksListrik.pdf"></iframe>
+    <!-- Object fallback: Desktop atau browser support -->
+    <object data="assets/RPP_SetrikaListrik.pdf" type="application/pdf">
+      <!-- Fallback untuk HP/tablet -->
+      <p>PDF tidak bisa ditampilkan. Silakan <a href="assets/RPP_SetrikaListrik.pdf" target="_blank">klik di sini untuk membuka modul</a>.</p>
+    </object>
   </div>
 
-  <button class="btn-download" onclick="window.open('assets/RPP_SetriksListrik.pdf', '_blank')">
+  <button class="btn-download" onclick="window.open('assets/RPP_SetrikaListrik.pdf', '_blank')">
     📥 Unduh Modul
   </button>
 </body>
 </html>
-
-
-

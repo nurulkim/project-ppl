@@ -12,8 +12,9 @@
       margin: 0;
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       flex-direction: column;
+      padding-top: 80px; /* beri jarak untuk tombol floating */
     }
 
     h1 {
@@ -21,6 +22,32 @@
       text-align: center;
       margin-bottom: 40px;
       text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+     /* Tombol kembali */
+    #btnBack {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      background: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+      z-index: 999;
+      transition: 0.3s;
+    }
+
+    #btnBack:hover {
+      background: #3578d3;
+      transform: scale(1.05);
     }
 
     .mode-container {
@@ -68,22 +95,27 @@
         height: 64px;
       }
     }
+    
   </style>
 </head>
 <body>
+  <!-- Tombol kembali ke dashboard -->
+  <button id="btnBack" title="Kembali ke Menu Utama" onclick="window.location.href='index.html'">
+    ⬅️
+  </button>
+
   <h1>Pilih Mode Media Interaktif</h1>
 
   <div class="mode-container">
     <a href="interaktif_mouse.html" class="mode">
       <img src="assets/icon-mouse.png" alt="Mouse" />
-      Mouse
+      Gunakan Mouse
     </a>
 
     <a href="interaktif_touch.html" class="mode">
       <img src="assets/icon-touch.png" alt="Touchscreen" />
-      Touchscreen
+      Gunakan Touchscreen
     </a>
   </div>
 </body>
 </html>
-

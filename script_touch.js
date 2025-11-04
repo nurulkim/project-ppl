@@ -3,269 +3,144 @@ const drawCanvas = document.getElementById("drawCanvas");
 const ctx = drawCanvas.getContext("2d");
 const elementsLayer = document.getElementById("elements-layer");
 const petunjuk = document.getElementById("petunjuk");
+const divKunci = document.getElementById("canvasKunci");
 
-function resizeCanvas() {
-  drawCanvas.width = canvasArea.offsetWidth;
-  drawCanvas.height = canvasArea.offsetHeight;
-}
-window.addEventListener("resize", resizeCanvas);
-resizeCanvas();
+drawCanvas.width = canvasArea.offsetWidth;
+drawCanvas.height = canvasArea.offsetHeight;
 
-let mode = "draw";
-let drawing = false;
-let startX, startY;
+let mode = "elemen";
+let drawing = false, startX, startY;
+let currentColor = "#2a4d8f", currentSize = 2;
 let lines = [];
-let tempStart = null;
 
-// Tombol
+// Toolbar
+const btnElemen = document.getElementById("modeElemen");
 const btnDraw = document.getElementById("modeDraw");
-const btnClick = document.getElementById("modeClick");
 const btnUndo = document.getElementById("undo");
+const btnKunci = document.getElementById("toggleKunci");
+const colorPicker = document.getElementById("colorPicker");
+const sizePicker = document.getElementById("sizePicker");
 
-btnDraw.classList.add("active");
+btnElemen.onclick = () => setMode("elemen");
 btnDraw.onclick = () => setMode("draw");
-btnClick.onclick = () => setMode("click");
-btnUndo.onclick = undoLine;
+btnUndo.onclick = () => { lines.pop(); redrawAll(); };
+btnKunci.onclick = () => {
+  divKunci.style.display = divKunci.style.display === "none" || divKunci.style.display === "" ? "block" : "none";
+  btnKunci.textContent = divKunci.style.display === "block" ? "🙈 Sembunyikan Kunci Jawaban" : "👁️ Tampilkan Kunci Jawaban";
+};
+colorPicker.onchange = e => currentColor = e.target.value;
+sizePicker.onchange = e => currentSize = parseInt(e.target.value);
 
-// ====================================================
-// MODE HANDLER
-// ====================================================
+// Mode handler
 function setMode(m) {
   mode = m;
+  btnElemen.classList.toggle("active", m === "elemen");
   btnDraw.classList.toggle("active", m === "draw");
-  btnClick.classList.toggle("active", m === "click");
-
-  drawing = false;
-  tempStart = null;
-
-  drawCanvas.ontouchstart = null;
-  drawCanvas.ontouchmove = null;
-  drawCanvas.ontouchend = null;
-
-  if (m === "draw") {
-    activateDrawMode();
-    drawCanvas.style.pointerEvents = "auto";
-    elementsLayer.style.pointerEvents = "none";
-    drawCanvas.style.zIndex = 5;
-    elementsLayer.style.zIndex = 4;
-  }
-
-  if (m === "click") {
-    activateClickMode();
-    drawCanvas.style.pointerEvents = "none";
-    elementsLayer.style.pointerEvents = "auto";
-    drawCanvas.style.zIndex = 4;
-    elementsLayer.style.zIndex = 5;
-  }
-
-  drawCanvas.style.cursor = m === "draw" ? "crosshair" : "pointer";
+  drawCanvas.style.pointerEvents = (m === "draw") ? "auto" : "none";
 }
 
-// ====================================================
-// UNDO GARIS
-// ====================================================
-function undoLine() {
-  lines.pop();
-  redrawAll();
+// DRAW MODE (touch only)
+function getTouchPos(e) {
+  const rect = drawCanvas.getBoundingClientRect();
+  const t = e.touches[0];
+  return { x: t.clientX - rect.left, y: t.clientY - rect.top };
 }
 
-// ====================================================
-// MODE GAMBAR (TOUCH)
-// ====================================================
-function activateDrawMode() {
-  drawCanvas.ontouchstart = (e) => {
-    e.preventDefault();
-    drawing = true;
-    const rect = drawCanvas.getBoundingClientRect();
-    const touch = e.touches[0];
-    startX = touch.clientX - rect.left;
-    startY = touch.clientY - rect.top;
-  };
-
-  drawCanvas.ontouchmove = (e) => {
-    if (!drawing) return;
-    const rect = drawCanvas.getBoundingClientRect();
-    const touch = e.touches[0];
-    const x = touch.clientX - rect.left;
-    const y = touch.clientY - rect.top;
-    redrawAll();
-    ctx.beginPath();
-    ctx.moveTo(startX, startY);
-    ctx.lineTo(x, y);
-    ctx.strokeStyle = "#2a4d8f";
-    ctx.lineWidth = 3;
-    ctx.stroke();
-  };
-
-  drawCanvas.ontouchend = (e) => {
-    if (!drawing) return;
-    drawing = false;
-    const rect = drawCanvas.getBoundingClientRect();
-    const touch = e.changedTouches[0];
-    const endX = touch.clientX - rect.left;
-    const endY = touch.clientY - rect.top;
-    lines.push({ x1: startX, y1: startY, x2: endX, y2: endY });
-    redrawAll();
-  };
-}
-
-// ====================================================
-// MODE KLIK / DOT-TO-DOT (TOUCH)
-// ====================================================
-function activateClickMode() {
-  drawCanvas.ontouchstart = (e) => {
-    e.preventDefault();
-    const rect = drawCanvas.getBoundingClientRect();
-    const touch = e.touches[0];
-    const x = touch.clientX - rect.left;
-    const y = touch.clientY - rect.top;
-
-    if (!tempStart) {
-      tempStart = { x, y };
-      drawPoint(x, y, "#ff0000");
-    } else {
-      lines.push({ x1: tempStart.x, y1: tempStart.y, x2: x, y2: y });
-      tempStart = null;
-      redrawAll();
-    }
-  };
-}
-
-// ====================================================
-// UTILITAS
-// ====================================================
-function drawPoint(x, y, color) {
+drawCanvas.addEventListener("touchstart", e => {
+  if (mode !== "draw") return;
+  e.preventDefault();
+  const pos = getTouchPos(e);
+  drawing = true;
+  startX = pos.x; startY = pos.y;
+});
+drawCanvas.addEventListener("touchmove", e => {
+  if (!drawing || mode !== "draw") return;
+  e.preventDefault();
+  const pos = getTouchPos(e);
   ctx.beginPath();
-  ctx.arc(x, y, 5, 0, Math.PI * 2);
-  ctx.fillStyle = color;
-  ctx.fill();
-}
-
+  ctx.moveTo(startX, startY);
+  ctx.lineTo(pos.x, pos.y);
+  ctx.strokeStyle = currentColor;
+  ctx.lineWidth = currentSize;
+  ctx.lineCap = "round";
+  ctx.stroke();
+  startX = pos.x; startY = pos.y;
+});
+drawCanvas.addEventListener("touchend", e => {
+  if (mode === "draw") {
+    drawing = false;
+    lines.push(ctx.getImageData(0, 0, drawCanvas.width, drawCanvas.height));
+  }
+});
 function redrawAll() {
   ctx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
-  for (let l of lines) {
-    ctx.beginPath();
-    ctx.moveTo(l.x1, l.y1);
-    ctx.lineTo(l.x2, l.y2);
-    ctx.strokeStyle = "#2a4d8f";
-    ctx.lineWidth = 3;
-    ctx.stroke();
-  }
+  for (let snap of lines) ctx.putImageData(snap, 0, 0);
 }
 
-// ====================================================
-// DRAG & DROP ELEMEN (TOUCH)
-// ====================================================
-document.querySelectorAll(".elemen").forEach((el) => {
-  el.addEventListener("touchstart", (e) => {
+// DRAG DROP (touch)
+document.querySelectorAll(".elemen").forEach(el => {
+  el.addEventListener("touchend", e => {
     e.preventDefault();
-    const touch = e.touches[0];
-    const clone = document.createElement("div");
-    clone.classList.add("resizable");
-    clone.style.position = "absolute";
-    clone.style.width = "100px";
-    clone.style.height = "100px";
-    clone.style.left = (touch.clientX - elementsLayer.getBoundingClientRect().left - 50) + "px";
-    clone.style.top = (touch.clientY - elementsLayer.getBoundingClientRect().top - 50) + "px";
-
-    const img = document.createElement("img");
-    img.src = el.querySelector("img").src;
-    img.alt = "elemen";
-    clone.appendChild(img);
-
-    const handle = document.createElement("div");
-    handle.classList.add("resize-handle");
-    clone.appendChild(handle);
-
-    elementsLayer.appendChild(clone);
-
-    makeDraggable(clone);
-    makeResizable(clone, handle);
-
-    if (petunjuk) petunjuk.style.display = "none";
+    const rect = elementsLayer.getBoundingClientRect();
+    const x = e.changedTouches[0].clientX - rect.left - 50;
+    const y = e.changedTouches[0].clientY - rect.top - 50;
+    petunjuk.style.display = "none";
+    createDrop(el, x, y);
   });
 });
 
-// ====================================================
-// DRAG & RESIZE (TOUCH)
-// ====================================================
+function createDrop(el, x, y) {
+  const clone = document.createElement("div");
+  clone.className = "resizable";
+  clone.style.left = x + "px";
+  clone.style.top = y + "px";
+  clone.style.width = "100px";
+  clone.style.height = "100px";
+  const img = document.createElement("img");
+  img.src = el.querySelector("img").src;
+  clone.appendChild(img);
+  const handle = document.createElement("div");
+  handle.className = "resize-handle";
+  clone.appendChild(handle);
+  elementsLayer.appendChild(clone);
+  makeDraggable(clone);
+  makeResizable(clone, handle);
+}
+
 function makeDraggable(el) {
-  let isDragging = false;
-  let offsetX = 0, offsetY = 0;
-
-  el.addEventListener("touchstart", (e) => {
-    e.preventDefault();
+  let dragging = false, ox, oy;
+  el.addEventListener("touchstart", e => {
     if (e.target.classList.contains("resize-handle")) return;
-    isDragging = true;
-    const touch = e.touches[0];
-    offsetX = touch.clientX - el.offsetLeft;
-    offsetY = touch.clientY - el.offsetTop;
-    el.style.zIndex = 10;
+    const t = e.touches[0];
+    dragging = true;
+    ox = t.clientX - el.offsetLeft;
+    oy = t.clientY - el.offsetTop;
   });
-
-  el.addEventListener("touchmove", (e) => {
-    if (!isDragging) return;
-    const touch = e.touches[0];
-    let newX = touch.clientX - elementsLayer.getBoundingClientRect().left - offsetX;
-    let newY = touch.clientY - elementsLayer.getBoundingClientRect().top - offsetY;
-    newX = Math.max(0, Math.min(newX, elementsLayer.offsetWidth - el.offsetWidth));
-    newY = Math.max(0, Math.min(newY, elementsLayer.offsetHeight - el.offsetHeight));
-    el.style.left = newX + "px";
-    el.style.top = newY + "px";
+  document.addEventListener("touchmove", e => {
+    if (!dragging) return;
+    const t = e.touches[0];
+    el.style.left = t.clientX - ox + "px";
+    el.style.top = t.clientY - oy + "px";
   });
-
-  el.addEventListener("touchend", () => {
-    isDragging = false;
-    el.style.zIndex = 5;
-  });
+  document.addEventListener("touchend", () => dragging = false);
 }
 
 function makeResizable(el, handle) {
-  let isResizing = false;
-  let startX, startY, startW, startH;
-
-  handle.addEventListener("touchstart", (e) => {
+  let resizing = false, sx, sy, sw, sh;
+  handle.addEventListener("touchstart", e => {
     e.preventDefault();
-    e.stopPropagation();
-    isResizing = true;
-    const touch = e.touches[0];
-    startX = touch.clientX;
-    startY = touch.clientY;
-    startW = parseInt(window.getComputedStyle(el).width, 10);
-    startH = parseInt(window.getComputedStyle(el).height, 10);
+    const t = e.touches[0];
+    resizing = true;
+    sx = t.clientX; sy = t.clientY;
+    sw = el.offsetWidth; sh = el.offsetHeight;
   });
-
-  handle.addEventListener("touchmove", (e) => {
-    if (!isResizing) return;
-    const touch = e.touches[0];
-    let newW = startW + (touch.clientX - startX);
-    let newH = startH + (touch.clientY - startY);
-    newW = Math.max(60, newW);
-    newH = Math.max(60, newH);
-    el.style.width = newW + "px";
-    el.style.height = newH + "px";
+  document.addEventListener("touchmove", e => {
+    if (!resizing) return;
+    const t = e.touches[0];
+    el.style.width = Math.max(60, sw + t.clientX - sx) + "px";
+    el.style.height = Math.max(60, sh + t.clientY - sy) + "px";
   });
-
-  handle.addEventListener("touchend", () => {
-    isResizing = false;
-  });
+  document.addEventListener("touchend", () => resizing = false);
 }
 
-// ====================================================
-// Tampilkan / Sembunyikan Kunci Jawaban
-// ====================================================
-const btnKunci = document.getElementById("toggleKunci");
-const divKunci = document.getElementById("canvasKunci");
-
-btnKunci.onclick = () => {
-  if (divKunci.style.display === "none" || divKunci.style.display === "") {
-    divKunci.style.display = "block";
-    btnKunci.textContent = "🙈 Sembunyikan Kunci Jawaban";
-  } else {
-    divKunci.style.display = "none";
-    btnKunci.textContent = "👁️ Tampilkan Kunci Jawaban";
-  }
-};
-
-// Jalankan mode awal
-setMode("draw");
+setMode("elemen");

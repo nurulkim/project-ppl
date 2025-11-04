@@ -41,8 +41,6 @@ function setMode(m) {
   drawCanvas.ontouchstart = null;
   drawCanvas.ontouchmove = null;
   drawCanvas.ontouchend = null;
-  drawCanvas.ontouchcancel = null;
-  drawCanvas.onclick = null;
 
   if (m === "draw") {
     activateDrawMode();
@@ -156,11 +154,17 @@ function redrawAll() {
 }
 
 // ====================================================
-// DRAG & DROP ELEMEN (TOUCH)
+// DRAG & DROP ELEMEN (TOUCH FIX)
 // ====================================================
 document.querySelectorAll(".elemen").forEach((el) => {
   el.addEventListener("touchstart", (e) => {
-    e.target.dataset.touchId = e.target.id; // set id
+    e.preventDefault(); // penting agar tidak muncul menu download
+    e.currentTarget.dataset.touchId = e.currentTarget.id;
+
+    // simpan posisi awal sentuhan
+    const touch = e.touches[0];
+    el.dataset.startX = touch.clientX - el.offsetLeft;
+    el.dataset.startY = touch.clientY - el.offsetTop;
   });
 });
 
@@ -171,9 +175,6 @@ elementsLayer.addEventListener("touchmove", (e) => {
 elementsLayer.addEventListener("touchend", (e) => {
   e.preventDefault();
   const touch = e.changedTouches[0];
-  const x = touch.clientX - elementsLayer.getBoundingClientRect().left - 50;
-  const y = touch.clientY - elementsLayer.getBoundingClientRect().top - 50;
-
   const targetId = touch.target.dataset.touchId;
   if (!targetId) return;
 
@@ -181,6 +182,10 @@ elementsLayer.addEventListener("touchend", (e) => {
   if (!draggedEl) return;
 
   if (petunjuk) petunjuk.style.display = "none";
+
+  const rect = elementsLayer.getBoundingClientRect();
+  const x = touch.clientX - rect.left - 50;
+  const y = touch.clientY - rect.top - 50;
 
   const clone = document.createElement("div");
   clone.classList.add("resizable");
@@ -209,9 +214,10 @@ elementsLayer.addEventListener("touchend", (e) => {
 // ====================================================
 function makeDraggable(el) {
   let isDragging = false;
-  let startX, startY, offsetX, offsetY;
+  let offsetX = 0, offsetY = 0;
 
   el.addEventListener("touchstart", (e) => {
+    e.preventDefault();
     if (e.target.classList.contains("resize-handle")) return;
     isDragging = true;
     const touch = e.touches[0];

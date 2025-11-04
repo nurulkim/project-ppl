@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Media Interaktif - Setrika Listrik</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Media Interaktif - Perbaikan Setrika</title>
 <style>
   body {
     font-family: "Poppins", sans-serif;
@@ -13,249 +13,199 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    min-height: 100vh;
+    overflow-x: hidden;
   }
 
   #btnBack {
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    background: #4a90e2;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 48px;
-    height: 48px;
-    font-size: 22px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-    z-index: 999;
-    transition: 0.3s;
+    position: absolute;
+    top: 15px; left: 15px;
+    background: #4a90e2; color: white;
+    border: none; border-radius: 50%;
+    width: 48px; height: 48px;
+    font-size: 22px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    z-index: 999; transition: 0.3s;
   }
-
   #btnBack:hover { background: #3578d3; transform: scale(1.05); }
 
-  h2 { text-align: center; color: #2a4d8f; margin: 70px 0 20px; }
+  h2 { text-align: center; margin-top: 70px; color: #2a4d8f; }
 
-  #controls {
-    display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; justify-content: center;
+  #controls { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin: 10px 0; }
+  #controls button {
+    padding: 8px 14px; border: none; border-radius: 6px;
+    background: #e0e0e0; cursor: pointer; font-size: 15px; transition: 0.2s;
   }
-  #controls button { padding: 8px 14px; border: none; border-radius: 6px; background: #e0e0e0; cursor: pointer; font-size: 15px; transition: 0.2s; }
   #controls button.active { background: #4a90e2; color: white; }
 
-  #canvasWrapper {
-    position: relative;
-    width: 90%;
-    max-width: 900px;
-    height: 500px;
-    border: 2px solid #ccc;
-    border-radius: 12px;
-    background: white;
-    overflow: hidden;
+  #canvasWrapper { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 1200px; }
+  #canvas {
+    position: relative; width: 65%; height: 500px;
+    border: 2px solid #ccc; border-radius: 12px; background: white; overflow: hidden;
   }
+  #drawCanvas { position: absolute; top:0; left:0; width:100%; height:100%; z-index:4; background:transparent; }
+  #elements-layer { position:absolute; top:0; left:0; width:100%; height:100%; z-index:5; }
+  #petunjuk { position:absolute; top:45%; left:50%; transform:translate(-50%, -50%); color:#777; font-size:16px; text-align:center; }
 
-  #drawCanvas {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
+  #canvasKunci {
+    width: 30%; border: 2px dashed #aaa; border-radius: 12px; padding: 10px;
+    background: #fafafa; text-align: center; display: none;
   }
+  #canvasKunci img { width: 100%; max-height: 480px; object-fit: contain; border-radius: 8px; }
 
-  #elements-layer {
-    position: absolute;
-    top:0; left:0;
-    width: 100%; height: 100%;
-    z-index: 2;
-  }
-
-  #elemenList {
-    display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 20px;
-  }
-
+  #elemenContainer { margin-top: 20px; width: 100%; max-width: 1200px; }
+  #elemenList { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
   .elemen {
-    width: 100px; height: 100px;
-    border: 2px solid #ccc;
-    border-radius: 8px;
-    background: white;
-    display: flex; align-items: center; justify-content: center;
-    cursor: grab;
+    width: 100px; height: 100px; border: 2px solid #ccc; border-radius: 8px;
+    background:white; display:flex; align-items:center; justify-content:center; cursor: grab;
   }
-
-  .elemen img { width: 80%; height: 80%; object-fit: contain; pointer-events: none; }
+  .elemen img { width: 80%; height: 80%; object-fit: contain; }
 
   .resizable {
-    position: absolute;
-    border: 1px dashed #aaa;
-    border-radius: 6px;
-    background: transparent;
-    cursor: move;
+    position: absolute; border: 1px dashed #aaa; border-radius: 6px;
+    background: transparent; cursor: move;
   }
-
-  .resizable img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
-
+  .resizable img { width:100%; height:100%; object-fit:contain; pointer-events:none; }
   .resize-handle {
-    position: absolute; bottom: 0; right: 0;
-    width: 14px; height: 14px;
-    background: #4a90e2; border-radius: 50%;
-    cursor: se-resize;
+    position:absolute; bottom:0; right:0; width:14px; height:14px;
+    background:#4a90e2; border-radius:50%; cursor: se-resize;
   }
-
 </style>
 </head>
 <body>
+<button id="btnBack" title="Kembali ke Menu Utama" onclick="window.location.href='index.html'">⬅️</button>
 
-<button id="btnBack" onclick="window.location.href='index.html'">⬅️</button>
-<h2>🧰 Media Pembelajaran: Merangkai Elemen Setrika</h2>
+<h2>🧰 Media Pembelajaran: Merangkai Elemen Setrika Listrik</h2>
 
 <div id="controls">
-  <button id="modeDraw" class="active">✏️ Mode Gambar</button>
-  <button id="modeElemen">🖱️ Drag & Drop</button>
+  <button id="modeDraw">✏️ Mode Gambar</button>
+  <button id="modeClick">🖱️ Drag & Drop</button>
   <button id="undo">↩️ Undo</button>
-  <label>Color:
-    <select id="selColor">
-      <option value="black">Black</option>
-      <option value="blue" selected>Blue</option>
-      <option value="red">Red</option>
-      <option value="green">Green</option>
-    </select>
-  </label>
-  <label>Width:
-    <select id="selWidth">
-      <option value="2">2</option>
-      <option value="4" selected>4</option>
-      <option value="6">6</option>
-    </select>
-  </label>
+  <button id="toggleKunci">👁️ Tampilkan Kunci Jawaban</button>
 </div>
 
 <div id="canvasWrapper">
-  <canvas id="drawCanvas"></canvas>
-  <div id="elements-layer"></div>
+  <div id="canvas">
+    <canvas id="drawCanvas"></canvas>
+    <div id="elements-layer"></div>
+    <div id="petunjuk">🧩 Silakan seret elemen ke area ini</div>
+  </div>
+  <div id="canvasKunci">
+    <h3>🔍 Susunan Benar</h3>
+    <img src="assets/kunciJawaban.png" alt="Kunci Jawaban" id="imgKunci" />
+  </div>
 </div>
 
-<div id="elemenList">
-  <div class="elemen" id="elemenA"><img src="assets/titikA.png" alt="A"></div>
-  <div class="elemen" id="elemenB"><img src="assets/titikB.png" alt="B"></div>
-  <div class="elemen" id="elemenC"><img src="assets/titikC.png" alt="C"></div>
+<div id="elemenContainer">
+  <h4>🎨 Elemen Setrika</h4>
+  <div id="elemenList">
+    <div class="elemen" id="elemenA" draggable="true"><img src="assets/titikA.png" alt="A" /></div>
+    <div class="elemen" id="elemenB" draggable="true"><img src="assets/titikB.png" alt="B" /></div>
+    <div class="elemen" id="elemenC" draggable="true"><img src="assets/titikC.png" alt="C" /></div>
+    <div class="elemen" id="elemenD" draggable="true"><img src="assets/titikD.png" alt="D" /></div>
+    <div class="elemen" id="elemenE" draggable="true"><img src="assets/titikE.png" alt="E" /></div>
+  </div>
 </div>
 
 <script>
-// ===== Canvas garis =====
-const canvas = document.getElementById('drawCanvas');
-const ctx = canvas.getContext('2d');
-const dpr = window.devicePixelRatio || 1;
-canvas.width = canvas.offsetWidth * dpr;
-canvas.height = canvas.offsetHeight * dpr;
-ctx.scale(dpr, dpr);
+const canvasArea = document.getElementById("canvas");
+const drawCanvas = document.getElementById("drawCanvas");
+const ctx = drawCanvas.getContext("2d");
+const elementsLayer = document.getElementById("elements-layer");
+const petunjuk = document.getElementById("petunjuk");
+const divKunci = document.getElementById("canvasKunci");
 
-let drawing = false, startX=0, startY=0;
+drawCanvas.width = canvasArea.offsetWidth;
+drawCanvas.height = canvasArea.offsetHeight;
+
+let mode = "elemen";
+let drawing = false, startX, startY;
+let currentColor = "#2a4d8f", currentSize = 2;
 let lines = [];
 
-const selColor = document.getElementById('selColor');
-const selWidth = document.getElementById('selWidth');
+const btnDraw = document.getElementById("modeDraw");
+const btnElemen = document.getElementById("modeClick");
+const btnUndo = document.getElementById("undo");
+const btnKunci = document.getElementById("toggleKunci");
 
-const btnDraw = document.getElementById('modeDraw');
-const btnElemen = document.getElementById('modeElemen');
-const btnUndo = document.getElementById('undo');
+btnDraw.onclick = () => setMode("draw");
+btnElemen.onclick = () => setMode("elemen");
+btnUndo.onclick = () => { lines.pop(); redrawAll(); };
+btnKunci.onclick = () => {
+  divKunci.style.display = divKunci.style.display === "none" || divKunci.style.display === "" ? "block" : "none";
+  btnKunci.textContent = divKunci.style.display === "block" ? "🙈 Sembunyikan Kunci Jawaban" : "👁️ Tampilkan Kunci Jawaban";
+};
 
-let mode = 'draw';
-
-btnDraw.onclick = ()=>setMode('draw');
-btnElemen.onclick = ()=>setMode('elemen');
-btnUndo.onclick = ()=>{ lines.pop(); redrawAll(); };
-
-function setMode(m){
-  mode=m;
-  btnDraw.classList.toggle('active', m==='draw');
-  btnElemen.classList.toggle('active', m==='elemen');
-  if(m==='draw'){
-    canvas.style.zIndex = 3;
-    document.getElementById('elements-layer').style.pointerEvents = 'none';
-  } else {
-    canvas.style.zIndex = 1;
-    document.getElementById('elements-layer').style.pointerEvents = 'auto';
-  }
+function setMode(m) {
+  mode = m;
+  btnDraw.classList.toggle("active", m === "draw");
+  btnElemen.classList.toggle("active", m === "elemen");
+  drawCanvas.style.pointerEvents = (m === "draw") ? "auto" : "none";
 }
 
-// Touch & mouse drawing
-function getPos(e){
-  const rect = canvas.getBoundingClientRect();
-  if(e.touches) return {x:e.touches[0].clientX - rect.left, y:e.touches[0].clientY - rect.top};
-  else return {x:e.clientX - rect.left, y:e.clientY - rect.top};
+function getTouchPos(e) {
+  const rect = drawCanvas.getBoundingClientRect();
+  const t = e.touches[0];
+  return { x: t.clientX - rect.left, y: t.clientY - rect.top };
 }
 
-function startDraw(e){
-  if(mode!=='draw') return;
-  drawing=true;
-  let p=getPos(e);
-  startX=p.x; startY=p.y;
+drawCanvas.addEventListener("touchstart", e => {
+  if (mode !== "draw" || e.touches.length > 1) return;
   e.preventDefault();
-}
-function moveDraw(e){
-  if(!drawing || mode!=='draw') return;
-  let p=getPos(e);
+  const pos = getTouchPos(e);
+  drawing = true;
+  startX = pos.x; startY = pos.y;
+});
+drawCanvas.addEventListener("touchmove", e => {
+  if (!drawing || mode !== "draw" || e.touches.length > 1) return;
+  e.preventDefault();
+  const pos = getTouchPos(e);
   ctx.beginPath();
-  ctx.moveTo(startX,startY);
-  ctx.lineTo(p.x,p.y);
-  ctx.strokeStyle=selColor.value;
-  ctx.lineWidth=selWidth.value;
-  ctx.lineCap='round';
+  ctx.moveTo(startX, startY);
+  ctx.lineTo(pos.x, pos.y);
+  ctx.strokeStyle = currentColor;
+  ctx.lineWidth = currentSize;
+  ctx.lineCap = "round";
   ctx.stroke();
-  startX=p.x; startY=p.y;
-  e.preventDefault();
-}
-function endDraw(e){
-  if(mode!=='draw') return;
-  drawing=false;
-  lines.push(ctx.getImageData(0,0,canvas.width,dpr?canvas.height/dpr:canvas.height));
-  e.preventDefault();
-}
+  startX = pos.x; startY = pos.y;
+});
+drawCanvas.addEventListener("touchend", e => {
+  if (mode === "draw") {
+    drawing = false;
+    lines.push(ctx.getImageData(0, 0, drawCanvas.width, drawCanvas.height));
+  }
+});
 
-canvas.addEventListener('mousedown', startDraw);
-canvas.addEventListener('mousemove', moveDraw);
-canvas.addEventListener('mouseup', endDraw);
-canvas.addEventListener('mouseout', endDraw);
-
-canvas.addEventListener('touchstart', startDraw, {passive:false});
-canvas.addEventListener('touchmove', moveDraw, {passive:false});
-canvas.addEventListener('touchend', endDraw, {passive:false});
-
-function redrawAll(){
-  ctx.clearRect(0,0,canvas.width,dpr?canvas.height/dpr:canvas.height);
-  for(let snap of lines) ctx.putImageData(snap,0,0);
+function redrawAll() {
+  ctx.clearRect(0,0,drawCanvas.width, drawCanvas.height);
+  for (let snap of lines) ctx.putImageData(snap,0,0);
 }
 
-// ===== Drag & drop elemen =====
-const elementsLayer = document.getElementById('elements-layer');
-document.querySelectorAll('.elemen').forEach(el=>{
-  el.addEventListener('touchend', e=>{
+document.querySelectorAll(".elemen").forEach(el => {
+  el.addEventListener("touchstart", e => { if(e.touches.length>1) return; e.preventDefault(); });
+  el.addEventListener("touchend", e => {
+    if(e.changedTouches.length>1) return;
     e.preventDefault();
     const rect = elementsLayer.getBoundingClientRect();
-    const x = e.changedTouches[0].clientX - rect.left - 50;
-    const y = e.changedTouches[0].clientY - rect.top - 50;
+    const x = e.changedTouches[0].clientX - rect.left - el.offsetWidth/2;
+    const y = e.changedTouches[0].clientY - rect.top - el.offsetHeight/2;
+    petunjuk.style.display = "none";
     createDrop(el,x,y);
-  });
-  el.addEventListener('mousedown', e=>{
-    const rect = elementsLayer.getBoundingClientRect();
-    createDrop(el,e.clientX - rect.left - 50, e.clientY - rect.top - 50);
   });
 });
 
 function createDrop(el,x,y){
-  const clone=document.createElement('div');
-  clone.className='resizable';
-  clone.style.left=x+'px';
-  clone.style.top=y+'px';
-  clone.style.width='100px';
-  clone.style.height='100px';
-  const img=document.createElement('img');
-  img.src=el.querySelector('img').src;
+  const clone = document.createElement("div");
+  clone.className="resizable";
+  clone.style.left=x+"px";
+  clone.style.top=y+"px";
+  clone.style.width="100px";
+  clone.style.height="100px";
+  const img=document.createElement("img");
+  img.src=el.querySelector("img").src;
   clone.appendChild(img);
-  const handle=document.createElement('div');
-  handle.className='resize-handle';
+  const handle=document.createElement("div");
+  handle.className="resize-handle";
   clone.appendChild(handle);
   elementsLayer.appendChild(clone);
   makeDraggable(clone);
@@ -264,51 +214,46 @@ function createDrop(el,x,y){
 
 function makeDraggable(el){
   let dragging=false, ox, oy;
-  el.addEventListener('touchstart', e=>{
-    if(e.target.classList.contains('resize-handle')) return;
-    const t=e.touches[0]; dragging=true; ox=t.clientX - el.offsetLeft; oy=t.clientY - el.offsetTop;
+  el.addEventListener("touchstart", e => {
+    if(e.touches.length>1) return;
+    if(e.target.classList.contains("resize-handle")) return;
+    e.preventDefault();
+    const t=e.touches[0];
+    dragging=true;
+    ox=t.clientX-el.offsetLeft;
+    oy=t.clientY-el.offsetTop;
   });
-  document.addEventListener('touchmove', e=>{
+  document.addEventListener("touchmove", e => {
     if(!dragging) return;
+    e.preventDefault();
     const t=e.touches[0];
-    el.style.left = t.clientX - ox + 'px';
-    el.style.top = t.clientY - oy + 'px';
+    el.style.left=t.clientX-ox+"px";
+    el.style.top=t.clientY-oy+"px";
   });
-  document.addEventListener('touchend', ()=>dragging=false);
-
-  el.addEventListener('mousedown', e=>{
-    if(e.target.classList.contains('resize-handle')) return;
-    dragging=true; ox=e.clientX - el.offsetLeft; oy=e.clientY - el.offsetTop;
-    function move(e){ if(dragging){ el.style.left=e.clientX - ox+'px'; el.style.top=e.clientY - oy+'px'; } }
-    function up(){ dragging=false; document.removeEventListener('mousemove',move); document.removeEventListener('mouseup',up);}
-    document.addEventListener('mousemove',move);
-    document.addEventListener('mouseup',up);
-  });
+  document.addEventListener("touchend", ()=>dragging=false);
 }
 
-function makeResizable(el,handle){
+function makeResizable(el, handle){
   let resizing=false, sx, sy, sw, sh;
-  handle.addEventListener('touchstart', e=>{
+  handle.addEventListener("touchstart", e=>{
+    if(e.touches.length>1) return;
     e.preventDefault();
-    const t=e.touches[0]; resizing=true; sx=t.clientX; sy=t.clientY; sw=el.offsetWidth; sh=el.offsetHeight;
-  });
-  document.addEventListener('touchmove', e=>{
-    if(!resizing) return;
     const t=e.touches[0];
-    el.style.width = Math.max(60, sw + t.clientX - sx)+'px';
-    el.style.height = Math.max(60, sh + t.clientY - sy)+'px';
+    resizing=true;
+    sx=t.clientX; sy=t.clientY;
+    sw=el.offsetWidth; sh=el.offsetHeight;
   });
-  document.addEventListener('touchend', ()=>resizing=false);
-
-  handle.addEventListener('mousedown', e=>{
+  document.addEventListener("touchmove", e=>{
+    if(!resizing) return;
     e.preventDefault();
-    resizing=true; sx=e.clientX; sy=e.clientY; sw=el.offsetWidth; sh=el.offsetHeight;
-    function move(e){ if(resizing){ el.style.width=Math.max(60, sw+e.clientX-sx)+'px'; el.style.height=Math.max(60, sh+e.clientY-sy)+'px'; } }
-    function up(){ resizing=false; document.removeEventListener('mousemove',move); document.removeEventListener('mouseup',up);}
-    document.addEventListener('mousemove',move);
-    document.addEventListener('mouseup',up);
+    const t=e.touches[0];
+    el.style.width=Math.max(60, sw+t.clientX-sx)+"px";
+    el.style.height=Math.max(60, sh+t.clientY-sy)+"px";
   });
+  document.addEventListener("touchend", ()=>resizing=false);
 }
+
+setMode("elemen");
 </script>
 </body>
 </html>

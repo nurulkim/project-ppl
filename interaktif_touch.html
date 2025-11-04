@@ -146,8 +146,10 @@
 // ===== Canvas garis =====
 const canvas = document.getElementById('drawCanvas');
 const ctx = canvas.getContext('2d');
-canvas.width = canvas.offsetWidth;
-canvas.height = canvas.offsetHeight;
+const dpr = window.devicePixelRatio || 1;
+canvas.width = canvas.offsetWidth * dpr;
+canvas.height = canvas.offsetHeight * dpr;
+ctx.scale(dpr, dpr);
 
 let drawing = false, startX=0, startY=0;
 let lines = [];
@@ -169,34 +171,60 @@ function setMode(m){
   mode=m;
   btnDraw.classList.toggle('active', m==='draw');
   btnElemen.classList.toggle('active', m==='elemen');
-  canvas.style.pointerEvents = (m==='draw') ? 'auto':'none';
+  if(m==='draw'){
+    canvas.style.zIndex = 3;
+    document.getElementById('elements-layer').style.pointerEvents = 'none';
+  } else {
+    canvas.style.zIndex = 1;
+    document.getElementById('elements-layer').style.pointerEvents = 'auto';
+  }
 }
 
 // Touch & mouse drawing
 function getPos(e){
-  let rect = canvas.getBoundingClientRect();
-  if(e.touches) {
-    return {x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top};
-  } else {
-    return {x: e.clientX - rect.left, y: e.clientY - rect.top};
-  }
+  const rect = canvas.getBoundingClientRect();
+  if(e.touches) return {x:e.touches[0].clientX - rect.left, y:e.touches[0].clientY - rect.top};
+  else return {x:e.clientX - rect.left, y:e.clientY - rect.top};
 }
 
-function startDraw(e){ if(mode!=='draw') return; drawing=true; let p=getPos(e); startX=p.x; startY=p.y; e.preventDefault(); }
-function moveDraw(e){ if(!drawing || mode!=='draw') return; let p=getPos(e); ctx.beginPath(); ctx.moveTo(startX,startY); ctx.lineTo(p.x,p.y); ctx.strokeStyle=selColor.value; ctx.lineWidth=selWidth.value; ctx.lineCap='round'; ctx.stroke(); startX=p.x; startY=p.y; e.preventDefault(); }
-function endDraw(e){ if(mode!=='draw') return; drawing=false; lines.push(ctx.getImageData(0,0,canvas.width,canvas.height)); e.preventDefault(); }
+function startDraw(e){
+  if(mode!=='draw') return;
+  drawing=true;
+  let p=getPos(e);
+  startX=p.x; startY=p.y;
+  e.preventDefault();
+}
+function moveDraw(e){
+  if(!drawing || mode!=='draw') return;
+  let p=getPos(e);
+  ctx.beginPath();
+  ctx.moveTo(startX,startY);
+  ctx.lineTo(p.x,p.y);
+  ctx.strokeStyle=selColor.value;
+  ctx.lineWidth=selWidth.value;
+  ctx.lineCap='round';
+  ctx.stroke();
+  startX=p.x; startY=p.y;
+  e.preventDefault();
+}
+function endDraw(e){
+  if(mode!=='draw') return;
+  drawing=false;
+  lines.push(ctx.getImageData(0,0,canvas.width,dpr?canvas.height/dpr:canvas.height));
+  e.preventDefault();
+}
 
 canvas.addEventListener('mousedown', startDraw);
 canvas.addEventListener('mousemove', moveDraw);
 canvas.addEventListener('mouseup', endDraw);
 canvas.addEventListener('mouseout', endDraw);
 
-canvas.addEventListener('touchstart', startDraw);
-canvas.addEventListener('touchmove', moveDraw);
-canvas.addEventListener('touchend', endDraw);
+canvas.addEventListener('touchstart', startDraw, {passive:false});
+canvas.addEventListener('touchmove', moveDraw, {passive:false});
+canvas.addEventListener('touchend', endDraw, {passive:false});
 
 function redrawAll(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.clearRect(0,0,canvas.width,dpr?canvas.height/dpr:canvas.height);
   for(let snap of lines) ctx.putImageData(snap,0,0);
 }
 
@@ -262,8 +290,7 @@ function makeResizable(el,handle){
   let resizing=false, sx, sy, sw, sh;
   handle.addEventListener('touchstart', e=>{
     e.preventDefault();
-    const t=e.touches[0];
-    resizing=true; sx=t.clientX; sy=t.clientY; sw=el.offsetWidth; sh=el.offsetHeight;
+    const t=e.touches[0]; resizing=true; sx=t.clientX; sy=t.clientY; sw=el.offsetWidth; sh=el.offsetHeight;
   });
   document.addEventListener('touchmove', e=>{
     if(!resizing) return;
@@ -282,7 +309,6 @@ function makeResizable(el,handle){
     document.addEventListener('mouseup',up);
   });
 }
-
 </script>
 </body>
 </html>

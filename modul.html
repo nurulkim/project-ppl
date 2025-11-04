@@ -13,11 +13,9 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
       min-height: 100vh;
     }
 
-    /* Tombol kembali */
     #btnBack {
       position: fixed;
       top: 15px;
@@ -46,7 +44,6 @@
     h1 {
       margin-top: 80px;
       color: #2a4d8f;
-      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
       text-align: center;
     }
 
@@ -59,35 +56,44 @@
       overflow: hidden;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       background: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
     }
 
-    iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
+    canvas {
+      width: 100% !important;
+      height: 100% !important;
+      display: block;
     }
 
-    .btn-download {
-      margin-top: 25px;
+    .pdf-buttons {
+      margin-top: 15px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .pdf-buttons button {
       background: #4a90e2;
       color: white;
       border: none;
-      padding: 12px 22px;
-      font-size: 16px;
-      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 14px;
+      border-radius: 6px;
       cursor: pointer;
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
       transition: 0.3s;
     }
 
-    .btn-download:hover {
+    .pdf-buttons button:hover {
       background: #3578d3;
       transform: translateY(-2px);
     }
 
     @media (max-width: 600px) {
       .pdf-container {
-        height: 400px;
+        height: 80vh;
       }
       h1 {
         font-size: 20px;
@@ -96,20 +102,76 @@
   </style>
 </head>
 <body>
-  <!-- Tombol kembali ke dashboard -->
   <button id="btnBack" title="Kembali ke Menu Utama" onclick="window.location.href='index.html'">
     ⬅️
   </button>
 
   <h1>📘 Modul Pembelajaran</h1>
 
-  <div class="pdf-container">
-    <!-- Menampilkan PDF -->
-    <iframe src="assets/RPP_SetriksListrik.pdf"></iframe>
+  <div class="pdf-container" id="pdf-container">
+    <p>Memuat PDF...</p>
   </div>
 
-  <button class="btn-download" onclick="window.open('assets/RPP_SetriksListrik', '_blank')">
-    📥 Unduh Modul
-  </button>
+  <div class="pdf-buttons">
+    <button onclick="downloadPDF()">📥 Unduh</button>
+    <button onclick="openPDFTab()">🌐 Buka di Tab Baru</button>
+    <button onclick="toggleFullScreen()">⛶ Full Screen</button>
+  </div>
+
+  <!-- PDF.js library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.7.107/pdf.min.js"></script>
+  <script>
+    const url = 'assets/RPP_SetriksListrik.pdf';
+    const container = document.getElementById('pdf-container');
+
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.7.107/pdf.worker.min.js';
+
+    let currentPage = 1;
+    let pdfDoc = null;
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    container.innerHTML = '';
+    container.appendChild(canvas);
+
+    function renderPage(pageNum) {
+      pdfDoc.getPage(pageNum).then(page => {
+        const containerWidth = container.clientWidth;
+        const containerHeight = container.clientHeight;
+        const viewport = page.getViewport({ scale: 1 });
+        const scale = Math.min(containerWidth / viewport.width, containerHeight / viewport.height);
+        const scaledViewport = page.getViewport({ scale });
+
+        canvas.width = scaledViewport.width;
+        canvas.height = scaledViewport.height;
+
+        page.render({ canvasContext: context, viewport: scaledViewport });
+      });
+    }
+
+    pdfjsLib.getDocument(url).promise.then(pdf => {
+      pdfDoc = pdf;
+      renderPage(currentPage);
+    }).catch(err => {
+      container.innerHTML = `<p>PDF gagal dimuat. Silakan <a href="${url}" target="_blank">klik di sini</a> untuk mengunduh.</p>`;
+      console.error(err);
+    });
+
+    // Tombol fungsionalitas
+    function downloadPDF() {
+      window.open(url, '_blank');
+    }
+
+    function openPDFTab() {
+      window.open(url, '_blank');
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        container.requestFullscreen().catch(err => alert(`Full screen gagal: ${err.message}`));
+      } else {
+        document.exitFullscreen();
+      }
+    }
+  </script>
 </body>
 </html>

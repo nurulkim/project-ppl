@@ -8,38 +8,33 @@ const divKunci = document.getElementById("canvasKunci");
 drawCanvas.width = canvasArea.offsetWidth;
 drawCanvas.height = canvasArea.offsetHeight;
 
-let mode = "elemen";
+let mode = "elemen"; // elemen / draw
 let drawing = false, startX, startY;
 let currentColor = "#2a4d8f", currentSize = 2;
 let lines = [];
 
-// Toolbar
-const btnElemen = document.getElementById("modeElemen");
+// Toolbar buttons
 const btnDraw = document.getElementById("modeDraw");
+const btnClick = document.getElementById("modeClick");
 const btnUndo = document.getElementById("undo");
 const btnKunci = document.getElementById("toggleKunci");
-const colorPicker = document.getElementById("colorPicker");
-const sizePicker = document.getElementById("sizePicker");
 
-btnElemen.onclick = () => setMode("elemen");
 btnDraw.onclick = () => setMode("draw");
+btnClick.onclick = () => setMode("elemen");
 btnUndo.onclick = () => { lines.pop(); redrawAll(); };
 btnKunci.onclick = () => {
-  divKunci.style.display = divKunci.style.display === "none" || divKunci.style.display === "" ? "block" : "none";
+  divKunci.style.display = divKunci.style.display === "block" ? "none" : "block";
   btnKunci.textContent = divKunci.style.display === "block" ? "🙈 Sembunyikan Kunci Jawaban" : "👁️ Tampilkan Kunci Jawaban";
 };
-colorPicker.onchange = e => currentColor = e.target.value;
-sizePicker.onchange = e => currentSize = parseInt(e.target.value);
 
-// Mode handler
 function setMode(m) {
   mode = m;
-  btnElemen.classList.toggle("active", m === "elemen");
   btnDraw.classList.toggle("active", m === "draw");
+  btnClick.classList.toggle("active", m === "elemen");
   drawCanvas.style.pointerEvents = (m === "draw") ? "auto" : "none";
 }
 
-// DRAW MODE (touch only)
+// DRAW MODE (touch)
 function getTouchPos(e) {
   const rect = drawCanvas.getBoundingClientRect();
   const t = e.touches[0];
@@ -50,8 +45,7 @@ drawCanvas.addEventListener("touchstart", e => {
   if (mode !== "draw") return;
   e.preventDefault();
   const pos = getTouchPos(e);
-  drawing = true;
-  startX = pos.x; startY = pos.y;
+  drawing = true; startX = pos.x; startY = pos.y;
 });
 drawCanvas.addEventListener("touchmove", e => {
   if (!drawing || mode !== "draw") return;
@@ -72,61 +66,71 @@ drawCanvas.addEventListener("touchend", e => {
     lines.push(ctx.getImageData(0, 0, drawCanvas.width, drawCanvas.height));
   }
 });
+
 function redrawAll() {
   ctx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
   for (let snap of lines) ctx.putImageData(snap, 0, 0);
 }
 
-// DRAG DROP (touch)
+// DRAG & DROP (touch)
 document.querySelectorAll(".elemen").forEach(el => {
-  el.addEventListener("touchend", e => {
+  el.addEventListener("touchstart", e => {
+    if (mode !== "elemen") return;
     e.preventDefault();
+    const t = e.touches[0];
     const rect = elementsLayer.getBoundingClientRect();
-    const x = e.changedTouches[0].clientX - rect.left - 50;
-    const y = e.changedTouches[0].clientY - rect.top - 50;
+    const clone = document.createElement("div");
+    clone.className = "resizable";
+    clone.style.left = t.clientX - rect.left - 50 + "px";
+    clone.style.top = t.clientY - rect.top - 50 + "px";
+    clone.style.width = "100px";
+    clone.style.height = "100px";
+
+    const img = document.createElement("img");
+    img.src = el.querySelector("img").src;
+    clone.appendChild(img);
+
+    const handle = document.createElement("div");
+    handle.className = "resize-handle";
+    clone.appendChild(handle);
+
+    elementsLayer.appendChild(clone);
     petunjuk.style.display = "none";
-    createDrop(el, x, y);
+
+    makeDraggable(clone);
+    makeResizable(clone, handle);
   });
 });
 
-function createDrop(el, x, y) {
-  const clone = document.createElement("div");
-  clone.className = "resizable";
-  clone.style.left = x + "px";
-  clone.style.top = y + "px";
-  clone.style.width = "100px";
-  clone.style.height = "100px";
-  const img = document.createElement("img");
-  img.src = el.querySelector("img").src;
-  clone.appendChild(img);
-  const handle = document.createElement("div");
-  handle.className = "resize-handle";
-  clone.appendChild(handle);
-  elementsLayer.appendChild(clone);
-  makeDraggable(clone);
-  makeResizable(clone, handle);
-}
-
 function makeDraggable(el) {
-  let dragging = false, ox, oy;
+  let offsetX = 0, offsetY = 0, dragging = false;
+
   el.addEventListener("touchstart", e => {
     if (e.target.classList.contains("resize-handle")) return;
     const t = e.touches[0];
+    offsetX = t.clientX - el.offsetLeft;
+    offsetY = t.clientY - el.offsetTop;
     dragging = true;
-    ox = t.clientX - el.offsetLeft;
-    oy = t.clientY - el.offsetTop;
+    el.style.zIndex = 9999;
   });
-  document.addEventListener("touchmove", e => {
+
+  el.addEventListener("touchmove", e => {
     if (!dragging) return;
+    e.preventDefault();
     const t = e.touches[0];
-    el.style.left = t.clientX - ox + "px";
-    el.style.top = t.clientY - oy + "px";
+    el.style.left = t.clientX - offsetX + "px";
+    el.style.top = t.clientY - offsetY + "px";
   });
-  document.addEventListener("touchend", () => dragging = false);
+
+  el.addEventListener("touchend", () => {
+    dragging = false;
+    el.style.zIndex = 5;
+  });
 }
 
 function makeResizable(el, handle) {
   let resizing = false, sx, sy, sw, sh;
+
   handle.addEventListener("touchstart", e => {
     e.preventDefault();
     const t = e.touches[0];
@@ -134,13 +138,16 @@ function makeResizable(el, handle) {
     sx = t.clientX; sy = t.clientY;
     sw = el.offsetWidth; sh = el.offsetHeight;
   });
-  document.addEventListener("touchmove", e => {
+
+  handle.addEventListener("touchmove", e => {
     if (!resizing) return;
+    e.preventDefault();
     const t = e.touches[0];
     el.style.width = Math.max(60, sw + t.clientX - sx) + "px";
     el.style.height = Math.max(60, sh + t.clientY - sy) + "px";
   });
-  document.addEventListener("touchend", () => resizing = false);
+
+  handle.addEventListener("touchend", () => resizing = false);
 }
 
 setMode("elemen");

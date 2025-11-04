@@ -4,12 +4,8 @@ const ctx = drawCanvas.getContext("2d");
 const elementsLayer = document.getElementById("elements-layer");
 const petunjuk = document.getElementById("petunjuk");
 
-function resizeCanvas() {
-  drawCanvas.width = canvasArea.offsetWidth;
-  drawCanvas.height = canvasArea.offsetHeight;
-}
-window.addEventListener("resize", resizeCanvas);
-resizeCanvas();
+drawCanvas.width = canvasArea.offsetWidth;
+drawCanvas.height = canvasArea.offsetHeight;
 
 let mode = "draw";
 let drawing = false;
@@ -71,7 +67,7 @@ function undoLine() {
 }
 
 // ====================================================
-// MODE GAMBAR
+// MODE GAMBAR (PAINT TO LINE)
 // ====================================================
 function activateDrawMode() {
   drawCanvas.onmousedown = (e) => {
@@ -127,7 +123,7 @@ function activateClickMode() {
 }
 
 // ====================================================
-// UTILITAS
+// UTILITAS GARIS & TITIK
 // ====================================================
 function drawPoint(x, y, color) {
   ctx.beginPath();
@@ -254,9 +250,10 @@ function makeResizable(el, handle) {
   });
 }
 
-// ====================================================
-// Tampilkan / Sembunyikan Kunci Jawaban
-// ====================================================
+// Jalankan mode awal
+activateDrawMode();
+
+// === Tampilkan / Sembunyikan Kunci Jawaban ===
 const btnKunci = document.getElementById("toggleKunci");
 const divKunci = document.getElementById("canvasKunci");
 
@@ -269,6 +266,3 @@ btnKunci.onclick = () => {
     btnKunci.textContent = "👁️ Tampilkan Kunci Jawaban";
   }
 };
-
-// Jalankan mode awal
-setMode("draw");
